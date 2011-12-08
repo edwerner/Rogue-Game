@@ -74,7 +74,7 @@ void OpenDoorCommand( void );
 // THE MAIN EVENT
 void main( void )
 {
-	SetConsoleTitle( "Article Three Demo" );
+	SetConsoleTitle( "Roguelike Game" );
 
 	// Declare the player's position
 	nPlayerX = 4;
