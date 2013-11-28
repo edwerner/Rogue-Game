@@ -1,7 +1,7 @@
 Rogue Game
 ==========
 
-Console application created in C++ using C text interfaces 'conio.h' and 'ExtendedWin32Console.h' for color output and text positioning. 
+Console application created in C++ using C text interfaces `conio.h` and `ExtendedWin32Console.h` for color output and text positioning. 
 
 Directions
 ---------- 
