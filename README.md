@@ -3,6 +3,8 @@ Rogue Game
 
 Console application created in C++ using C text interfaces `conio.h` and `ExtendedWin32Console.h` for color output and text positioning.
 
+![](RogueGame/media/roguelike_game_001.jpg)
+
 Compile:
 ---------
     g++ -c main.cpp
