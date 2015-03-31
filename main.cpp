@@ -31,7 +31,7 @@ struct TILE_TYPE
 };
 
 // FLOOR MAP
-int nMapArray[ MAP_HEIGHT ][ MAP_WIDTH ] = { 
+int nMapArray[MAP_HEIGHT][MAP_WIDTH] = { 
 	{ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1 },
 	{ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 0, 0, 2, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 0, 1 },
 	{ 4, 4, 1, 1, 1, 1, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 2, 1 },
@@ -52,9 +52,9 @@ int nMapArray[ MAP_HEIGHT ][ MAP_WIDTH ] = {
 // GLOBAL ARRAY USED TO DEFINE ALL TYPES OF TILES USED IN GAME
 TILE_TYPE  sTileIndex[] = {
 	{ '.', 7,  true },			// (0) TILE_ROCKFLOOR
-	{ '#', 7,  false},			// (1) TILE_WALL
-	{ '+', 6,  false },			// (2) TILE_CLOSEDDOOR
-	{ '/', 6,  true },			// (3) TILE_OPENDOOR
+	{ '#', 7,  false },			// (1) TILE_WALL
+	{ '+', 9,  false },			// (2) TILE_CLOSEDDOOR
+	{ '/', 11,  true },			// (3) TILE_OPENDOOR
 	{ '.', 10, true },			// (4) TILE_GRASS
 	{ 'T', 10, false }			// (5) TILE_TREE
 };
@@ -64,17 +64,18 @@ int nPlayerX;
 int nPlayerY;
 
 // FUNCTION PROTOTYPES
-void DrawMap( void );
-bool IsPassable( int x, int y );
-void DrawTile( int x, int y );
+void DrawMap(void);
+bool IsPassable(int x, int y);
+void DrawTile(int x, int y);
 
-void CloseDoorCommand( void );
-void OpenDoorCommand( void );
+void CloseDoorCommand(void);
+void OpenDoorCommand(void);
 
 // THE MAIN EVENT
-void main( void )
+void main(void)
 {
-	SetConsoleTitle( "Roguelike Game" );
+	SetConsoleTitle("Roguelike Game");
+
 
 	// Declare the player's position
 	nPlayerX = 4;
@@ -82,14 +83,14 @@ void main( void )
 
 	// Main game loop
 	char nKey;
-	while( true )
+	while(true)
 	{
 		// draw floor map
 		DrawMap();
 		
 		// draw player on screen
-		console.SetColor( 14 );
-		console.SetPosition( nPlayerX, nPlayerY );
+		console.SetColor(14);
+		console.SetPosition(nPlayerX, nPlayerY);
 		console << '@';
 
 		// get user input
@@ -98,7 +99,7 @@ void main( void )
 		// process input
 		int nDeltaX = 0;
 		int nDeltaY = 0;
-		switch( nKey )
+		switch(nKey)
 		{
 			// move up
 			case 'w':
@@ -141,13 +142,12 @@ void main( void )
 		}
 
 		// check if we can move in that direction
-		if( IsPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY) )
+		if(IsPassable(nPlayerX + nDeltaX, nPlayerY + nDeltaY))
 		{
 			// if okay, move in the direction specified by the player
 			nPlayerX += nDeltaX;
 			nPlayerY += nDeltaY;
 		}
-
 	}
 }
 
@@ -158,10 +158,10 @@ void main( void )
 // TRUE if the coordinate is passable, FALSE if the player cannot occupy that coordinate.
 //
 //*********************************************************************************//
-bool IsPassable( int x, int y )
+bool IsPassable(int x, int y)
 {
 	// makes sure coordinates are valid
-	if( x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT )
+	if(x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT)
 		return false;
 
 	// stores value of specified tile
@@ -177,15 +177,22 @@ bool IsPassable( int x, int y )
 // this function draw the floor map on the screen
 //
 //*********************************************************************************//
-void DrawMap( void )
+void DrawMap(void)
 {
-	for( int y = 0; y < MAP_HEIGHT; y++ )
+	for(int y = 0; y < MAP_HEIGHT; y++)
 	{
-		for( int x = 0; x < MAP_WIDTH; x++ )
+		for(int x = 0; x < MAP_WIDTH; x++)
 		{
 			DrawTile(x, y);
 		}
-	}	
+	}
+
+	// draw notifications to the player
+	console.SetPosition(2, 22);
+	console << "\n\n  Directions: \n";
+	console << "  Navigate using 'WASD' keys \n";
+	console << "  Press 'o' to open doors \n";
+	console << "  Press 'c' to close doors";
 }
 
 //*********************************************************************************//
@@ -194,16 +201,16 @@ void DrawMap( void )
 //	this function draws a map tile for all coordinates given
 //
 //*********************************************************************************//
-void DrawTile( int x, int y )
+void DrawTile(int x, int y)
 {
 	// sets position of tiles
-	console.SetPosition( x, y );
+	console.SetPosition(x, y);
 
 	// specifies tile type
 	int nType = nMapArray[y][x];
 
 	// sets tile color
-	console.SetColor( sTileIndex[nType].nColorCode );
+	console.SetColor(sTileIndex[nType].nColorCode);
 
 	// draws tiles to the screen
 	console << sTileIndex[nType].nCharacter;
@@ -215,10 +222,10 @@ void DrawTile( int x, int y )
 // user command function converts closed doors to open ones specified by the player
 //
 //*********************************************************************************//
-void OpenDoorCommand( void )
+void OpenDoorCommand(void)
 {
 	// draw notifications to the player
-	console.SetPosition( 2, 22 );
+	console.SetPosition(2, 22);
 	console << "Which direction? (w, a, s, d)";
 
 	// give cue as to where to look
@@ -230,7 +237,7 @@ void OpenDoorCommand( void )
 	console.Clear();
 
 	// figure out which key player pressed
-	switch( nKey )
+	switch(nKey)
 	{
 		// SOUTH
 		case 's':
@@ -264,7 +271,7 @@ void OpenDoorCommand( void )
 	}
 
 	// make sure theres a door present in the direction stated by the user
-	if( nMapArray[nPlayerY + nDeltaY][nPlayerX + nDeltaX] == TILE_CLOSEDDOOR )
+	if(nMapArray[nPlayerY + nDeltaY][nPlayerX + nDeltaX] == TILE_CLOSEDDOOR)
 	{
 		// if the door is opened, change its state to closed
 		nMapArray[nPlayerY + nDeltaY][nPlayerX + nDeltaX] = TILE_OPENDOOR;
@@ -278,10 +285,10 @@ void OpenDoorCommand( void )
 // at a tile specified by the user
 //
 //*********************************************************************************//
-void CloseDoorCommand( void )
+void CloseDoorCommand(void)
 {
 	// draw a notification to the user
-	console.SetPosition( 2, 22 );
+	console.SetPosition(2, 22);
 	console << "Which direction? (w, a, s, d)";
 
 	// let the user decide where to look
@@ -293,7 +300,7 @@ void CloseDoorCommand( void )
 	console.Clear();
 
 	// compute which tile the user specified
-	switch( nKey )
+	switch(nKey)
 	{
 		// SOUTH
 		case 's':
@@ -326,7 +333,7 @@ void CloseDoorCommand( void )
 	}
 
 	// make sure theres a door present in the direction stated by the user
-	if( nMapArray[nPlayerY + nDeltaY][nPlayerX + nDeltaX] == TILE_OPENDOOR )
+	if(nMapArray[nPlayerY + nDeltaY][nPlayerX + nDeltaX] == TILE_OPENDOOR)
 	{
 		// if there's a closed door, change its state to closed
 		nMapArray[nPlayerY + nDeltaY][nPlayerX + nDeltaX] = TILE_CLOSEDDOOR;
